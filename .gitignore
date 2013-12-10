@@ -8,3 +8,13 @@ build/*
 *.pyc
 doc/build/*
 doc/source/api/*
+*~
+.*~
+.*swp
+#*#
+.project
+/.cache
+/metadata/cache
+gerritbot.conf
+gerritbot_chan.conf
+gerritbot.log
