@@ -55,6 +55,8 @@ openstack-dev:
 
 import ConfigParser
 #import daemon
+import datetime
+import dateutil.relativedelta
 import gerritlib.gerrit
 import irc.bot
 import json
@@ -78,6 +80,7 @@ import paho.mqtt.client as mqtt
 #    import daemon.pidfile
 #    pid_file_module = daemon.pidfile
 
+fg = 0
 
 # https://bitbucket.org/jaraco/irc/issue/34/
 # irc-client-should-not-crash-on-failed
@@ -129,8 +132,82 @@ class GerritBot(irc.bot.SingleServerIRCBot):
             self.log.exception('Exception sending message:')
             self.connection.reconnect()
 
+    def on_privmsg(self, c, e):
+        self.do_command(e, e.arguments[0], 1)
 
-class Gerrit(threading.Thread):
+    def on_pubmsg(self, c, e):
+        if re.search(r'^!',  e.arguments[0]):
+            a = e.arguments[0].split("!")
+            self.do_command(e, a[1].strip(), 0)
+        return
+
+    def do_command(self, e, cmd, private):
+        nick = e.source.nick
+        c = self.connection
+        match = ""
+        resp = ""
+        error = 0
+
+        pattern = cmd.split()
+        if len(pattern) > 1:
+            match = pattern[1]
+
+        if re.search(r'^pl\b', cmd) or re.search(r'^patchlist\b', cmd):
+            count = 0
+            if match:
+                kindcount = 0
+                # matchKind = [ "message", "project", "owner", "change", "topic" ]
+                matchKind = [ "message", "project", "owner" ]
+
+                if match.split(":",1)[0] in matchKind:
+                    try:
+                        resp = gerritlib.gerrit.Gerrit.bulk_query(fg, "status:open AND %s" % match)
+                    except Exception:
+                        c.notice(nick, "Illegal expression")
+                        error = 1
+                else:
+                    while True:
+                        try:
+                            resp = gerritlib.gerrit.Gerrit.bulk_query(fg, "status:open AND %s:%s" % (matchKind[kindcount], match))
+                        except Exception:
+                            c.notice(nick, "Illegal expression")
+                            error = 1
+                            break
+                        if resp[-1]['type'] == "error" or int(resp[-1]['rowCount']) == 0:
+                            if kindcount < len(matchKind)-1:
+                                kindcount = kindcount + 1
+                            else:
+                                break
+                        else:
+                            break
+            else:
+                resp = gerritlib.gerrit.Gerrit.bulk_query(fg, "status:open")
+
+            if error == 0 and resp[-1]['type'] != "error" and ( private == 1 or int(resp[-1]['rowCount']) < 4 ):
+                while True:
+                    if count < int(resp[-1]['rowCount']):
+                        dt1 = datetime.datetime.now()
+                        dt2 = datetime.datetime.fromtimestamp(resp[count]['lastUpdated'])
+                        rd = dateutil.relativedelta.relativedelta (dt1, dt2)
+                        submtime = "%d days and %d hours" % (rd.days, rd.hours)
+                        msg = '%s ::%s (submitted by %s %s ago): %s' % (
+                            resp[count]['url'],
+                            resp[count]['project'],
+                            resp[count]['owner']['username'],
+                            submtime,
+                            resp[count]['subject'])
+                        if private == 1:
+                            c.notice(nick, msg)
+                        else:
+                            c.notice(e.target, msg)
+                    else:
+                        break
+                    count = count + 1
+            elif error == 0 and resp[-1]['type'] != "error" and int(resp[-1]['rowCount']) > 4:
+                msg = "%s matching patches in queue. Use pl in private for a full list." % resp[-1]['rowCount']
+                c.notice(e.target, msg)
+
+class Gerritw(threading.Thread):
     def __init__(self, ircbot, channel_config, server,
                  username, port=29418, keyfile=None):
         super(Gerrit, self).__init__()
@@ -385,6 +462,7 @@ def _main(config):
                     config.getint('ircbot', 'port'),
                     config.getboolean('ircbot', 'force_ssl'),
                     config.get('ircbot', 'server_password'))
+<<<<<<< HEAD
     if config.has_option('ircbot', 'use_mqtt'):
         use_mqtt = config.getboolean('ircbot', 'use_mqtt')
     else:
@@ -404,6 +482,21 @@ def _main(config):
                    config.get('gerrit', 'user'),
                    config.getint('gerrit', 'port'),
                    config.get('gerrit', 'key'))
+=======
+    g = Gerritw(bot,
+               channel_config,
+               config.get('gerrit', 'host'),
+               config.get('gerrit', 'user'),
+               config.getint('gerrit', 'port'),
+               config.get('gerrit', 'key'))
+
+    fg = gerritlib.gerrit.Gerrit(
+               config.get('gerrit', 'host'),
+               config.get('gerrit', 'user'),
+               config.getint('gerrit', 'port'),
+               config.get('gerrit', 'key'))
+
+>>>>>>> Add the pl command
     g.start()
     bot.start()
 
