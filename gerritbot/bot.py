@@ -54,7 +54,8 @@ openstack-dev:
 """
 
 import ConfigParser
-import daemon
+#import daemon
+import gerritlib.gerrit
 import irc.bot
 import json
 import logging.config
@@ -68,14 +69,14 @@ import yaml
 
 import paho.mqtt.client as mqtt
 
-try:
-    import daemon.pidlockfile
-    pid_file_module = daemon.pidlockfile
-except Exception:
+#try:
+#    import daemon.pidlockfile
+#    pid_file_module = daemon.pidlockfile
+#except Exception:
     # as of python-daemon 1.6 it doesn't bundle pidlockfile anymore
     # instead it depends on lockfile-0.9.1
-    import daemon.pidfile
-    pid_file_module = daemon.pidfile
+#    import daemon.pidfile
+#    pid_file_module = daemon.pidfile
 
 
 # https://bitbucket.org/jaraco/irc/issue/34/
@@ -143,8 +144,6 @@ class Gerrit(threading.Thread):
         self.connected = False
 
     def connect(self):
-        # Import here because it needs to happen after daemonization
-        import gerritlib.gerrit
         try:
             self.gerrit = gerritlib.gerrit.Gerrit(
                 self.server, self.username, self.port, self.keyfile)
@@ -414,6 +413,7 @@ def main():
         print("Usage: %s CONFIGFILE" % sys.argv[0])
         sys.exit(1)
 
+<<<<<<< HEAD
     config = ConfigParser.ConfigParser({'force_ssl': 'false',
                                         'server_password': None})
     config.read(sys.argv[1])
@@ -427,6 +427,12 @@ def main():
     pid = pid_file_module.TimeoutPIDLockFile(pid_path, 10)
     with daemon.DaemonContext(pidfile=pid):
         _main(config)
+=======
+#    pid = pid_file_module.TimeoutPIDLockFile(
+#        "/tmp/gerritbot.pid", 10)
+#    with daemon.DaemonContext(pidfile=pid):
+    _main()
+>>>>>>> Stop daemonisation for debugging
 
 
 def setup_logging(config):
