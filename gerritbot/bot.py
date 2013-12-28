@@ -64,6 +64,7 @@ import logging.config
 import os
 import re
 import ssl
+import subprocess
 import sys
 import threading
 import time
@@ -206,6 +207,54 @@ class GerritBot(irc.bot.SingleServerIRCBot):
             elif error == 0 and resp[-1]['type'] != "error" and int(resp[-1]['rowCount']) > 4:
                 msg = "%s matching patches in queue. Use pl in private for a full list." % resp[-1]['rowCount']
                 c.notice(e.target, msg)
+
+        # http://bpaste.net/raw/159498/ ::arbor
+
+        elif re.search(r'^pq\b', cmd) or re.search(r'^patchqueue\b', cmd):
+            error = 0
+            repo = ""
+            respfile = ""
+            cmd = ""
+            result = ""
+            NOTIFY_SINNER = 0
+
+            if len(pattern) > 2:
+                repo = pattern[2]
+                repo = repo.split(":")
+                if len(repo) != 3:
+                    error = 1
+
+            if error == 0:
+                cmd = "./pq.bash" + " " + match + " " + repo[2]
+                try:
+                    respfile = subprocess.Popen(cmd, stderr=subprocess.STDOUT, stdout=subprocess.PIPE, shell=True).stdout.read()
+                except Exception:
+                    error = 1
+
+                if error == 0:
+                    cmd = re.findall(r'WKRESPONSE:.*', respfile)
+                    result = cmd[0].split(":")
+                    try:
+                        with open (result[1], "r") as myfile:
+                            data=myfile.read().replace('\n', '')
+                    except Exception:
+                        error = 1
+
+                    if error == 0:
+                        try:
+                            with open("/srv/www/localhost/htdocs/gerrit/p_result.html", "w") as text_file:
+                                text_file.write("%s" % data)
+                        except Exception:
+                            error = 1
+
+                        if NOTIFY_SINNER == 1 and error == 0:
+                            message = "Please read https://galileo.mailstation.de/gerrit.html"
+                            c.notice(nick, message)
+
+                        try:
+                            os.remove(result[1])
+                        except Exception:
+                            error = 1
 
 class Gerritw(threading.Thread):
     def __init__(self, ircbot, channel_config, server,
