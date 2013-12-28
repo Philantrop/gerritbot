@@ -256,6 +256,26 @@ class GerritBot(irc.bot.SingleServerIRCBot):
                         except Exception:
                             error = 1
 
+        if re.search(r'^pd\b', cmd) or re.search(r'^patchdone\b', cmd):
+            error = 0
+            pdresult = 0
+            pdaction = { 'abandon': True }
+
+            if match:
+                try:
+                    resp = gerritlib.gerrit.Gerrit.bulk_query(fg, "status:open AND message:Patch-URL: %s" % match)
+                except Exception:
+                    error = 1
+
+                if resp[-1]['type'] == "error" or int(resp[-1]['rowCount']) == 0:
+                    error = 1
+                else:
+                    if error == 0:
+                        try:
+                            pdresult = gerritlib.gerrit.Gerrit.review(fg, resp[0]['project'], resp[0]['number']+",1", cmd, pdaction)
+                        except Exception:
+                            error = 1
+
 class Gerritw(threading.Thread):
     def __init__(self, ircbot, channel_config, server,
                  username, port=29418, keyfile=None):
