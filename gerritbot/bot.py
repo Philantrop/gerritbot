@@ -605,7 +605,7 @@ def setup_logging(config):
             raise Exception("Unable to read logging config file at %s" % fp)
         logging.config.fileConfig(fp)
     else:
-        logging.basicConfig(level=logging.DEBUG)
+        logging.basicConfig(level=logging.ERROR)
 
 
 if __name__ == "__main__":
