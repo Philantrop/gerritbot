@@ -216,7 +216,7 @@ class GerritBot(irc.bot.SingleServerIRCBot):
             respfile = ""
             cmd = ""
             result = ""
-            NOTIFY_SINNER = 0
+            NOTIFY_SINNER = 1
 
             if len(pattern) > 2:
                 repo = pattern[2]
@@ -240,7 +240,7 @@ class GerritBot(irc.bot.SingleServerIRCBot):
                     except Exception:
                         error = 1
 
-                    if error == 0:
+                    if not "Repository not in Gerrit" in data and error == 0:
                         try:
                             with open("/srv/www/localhost/htdocs/gerrit/p_result.html", "w") as text_file:
                                 text_file.write("%s" % data)
@@ -256,7 +256,7 @@ class GerritBot(irc.bot.SingleServerIRCBot):
                         except Exception:
                             error = 1
 
-        if re.search(r'^pd\b', cmd) or re.search(r'^patchdone\b', cmd):
+        elif re.search(r'^pd\b', cmd) or re.search(r'^patchdone\b', cmd):
             error = 0
             pdresult = 0
             pdaction = { 'abandon': True }
