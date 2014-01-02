@@ -80,7 +80,10 @@ fi
 
 rm "${PATCHFILE}"
 
-if [[ $(git push ${DRYRUN} --quiet origin HEAD:refs/for/master) ]]; then
+git push ${DRYRUN} --quiet origin HEAD:refs/for/master
+rc=$?
+
+if [[ ${rc} == 0 ]]; then
     echo "Pushed successfully to Gerrit" > "${RESPONSE}"
 else
     error_out "Push to Gerrit failed" 6
