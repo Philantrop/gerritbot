@@ -19,9 +19,11 @@
 # This file differs greatly from the original upstream version at 
 # https://github.com/openstack-infra/gerritbot/blob/master/gerritbot/bot.py
 #
-# These modifications are done for use within Exherbo (Linux), were done by
-# Wulf C. Krueger. Any errors, mistakes, etc. are solely mine and not of
-# original authors.
+# These modifications are done for use within Exherbo (Linux) and were done by
+# Wulf C. Krueger. Any errors, mistakes, etc. are solely mine and not those of
+# the original authors. Please report any bugs, etc. with respect to my
+# additions to wk@mailstation.de. Thanks!
+#
 # This prominent statement is added to comply with clause 4b of the License.
 #
 
