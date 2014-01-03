@@ -17,7 +17,8 @@ RESPONSE=$(mktemp -uq)
 PATCHFILE=$(mktemp -uq)
 TMPFILE=$(mktemp -uq)
 
-DRYRUN="--dry-run"
+#DRYRUN="--dry-run"
+DRYRUN=""
 
 if ! [[ $(ssh -x -p 29418 philantrop@galileo.mailstation.de gerrit ls-projects | grep "^${repo}$") ]]; then
     error_out "Repository not in Gerrit" 0
