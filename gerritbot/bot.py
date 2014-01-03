@@ -2,6 +2,7 @@
 
 #    Copyright 2011 OpenStack LLC
 #    Copyright 2012 Hewlett-Packard Development Company, L.P.
+#    Copyright 2014 Wulf C. Krueger
 #
 #    Licensed under the Apache License, Version 2.0 (the "License"); you may
 #    not use this file except in compliance with the License. You may obtain
@@ -14,6 +15,15 @@
 #    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #    License for the specific language governing permissions and limitations
 #    under the License.
+#
+# This file differs greatly from the original upstream version at 
+# https://github.com/openstack-infra/gerritbot/blob/master/gerritbot/bot.py
+#
+# These modifications are done for use within Exherbo (Linux), were done by
+# Wulf C. Krueger. Any errors, mistakes, etc. are solely mine and not of
+# original authors.
+# This prominent statement is added to comply with clause 4b of the License.
+#
 
 # The configuration file should look like:
 """
