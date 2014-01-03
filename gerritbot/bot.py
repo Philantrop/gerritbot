@@ -225,7 +225,7 @@ class GerritBot(irc.bot.SingleServerIRCBot):
                     error = 1
 
             if error == 0:
-                cmd = "./pq.bash" + " " + match + " " + repo[2]
+                cmd = "/usr/local/bin/pq.bash" + " " + match + " " + repo[2]
                 try:
                     respfile = subprocess.Popen(cmd, stderr=subprocess.STDOUT, stdout=subprocess.PIPE, shell=True).stdout.read()
                 except Exception:
@@ -242,7 +242,7 @@ class GerritBot(irc.bot.SingleServerIRCBot):
 
                     if not "Repository not in Gerrit" in data and error == 0:
                         try:
-                            with open("/srv/www/localhost/htdocs/gerrit/p_result.html", "w") as text_file:
+                            with open("/srv/www/localhost/htdocs/patch/p_result.html", "w") as text_file:
                                 text_file.write("%s" % data)
                         except Exception:
                             error = 1
