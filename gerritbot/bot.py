@@ -287,7 +287,7 @@ class GerritBot(irc.bot.SingleServerIRCBot):
                     error = 1
 
                 if resp[-1]['type'] == "error" or int(resp[-1]['rowCount']) == 0:
-                    self.log.error('result of type erroor or empty.')
+                    self.log.error('result of type error or empty.')
                     error = 1
                 else:
                     if error == 0:
