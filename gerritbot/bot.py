@@ -242,6 +242,7 @@ class GerritBot(irc.bot.SingleServerIRCBot):
                 try:
                     respfile = subprocess.Popen(cmd, stderr=subprocess.STDOUT, stdout=subprocess.PIPE, shell=True).stdout.read()
                 except Exception:
+                    self.log.error('pq.bash failed.')
                     error = 1
 
                 if error == 0:
@@ -251,6 +252,7 @@ class GerritBot(irc.bot.SingleServerIRCBot):
                         with open (result[1], "r") as myfile:
                             data=myfile.read().replace('\n', '')
                     except Exception:
+                        self.log.error('reading the response file failed')
                         error = 1
 
                     if not "Repository not in Gerrit" in data and error == 0:
@@ -258,6 +260,7 @@ class GerritBot(irc.bot.SingleServerIRCBot):
                             with open("/srv/www/localhost/htdocs/patch/p_result.html", "w") as text_file:
                                 text_file.write("%s" % data)
                         except Exception:
+                            self.log.error('writing the result file failed.')
                             error = 1
 
                         if NOTIFY_SINNER == 1 and error == 0:
@@ -267,6 +270,7 @@ class GerritBot(irc.bot.SingleServerIRCBot):
                         try:
                             os.remove(result[1])
                         except Exception:
+                            self.log.error('deleting the result file failed.')
                             error = 1
 
         elif re.search(r'^pd\b', cmd) or re.search(r'^patchdone\b', cmd):
@@ -278,15 +282,18 @@ class GerritBot(irc.bot.SingleServerIRCBot):
                 try:
                     resp = gerritlib.gerrit.Gerrit.bulk_query(fg, "status:open AND message:Patch-URL: %s" % match)
                 except Exception:
+                    self.log.error('querying Gerrit for pd failed')
                     error = 1
 
                 if resp[-1]['type'] == "error" or int(resp[-1]['rowCount']) == 0:
+                    self.log.error('result of type erroor or empty.')
                     error = 1
                 else:
                     if error == 0:
                         try:
                             pdresult = gerritlib.gerrit.Gerrit.review(fg, resp[0]['project'], resp[0]['number']+",1", cmd, pdaction)
                         except Exception:
+                            self.log.error('pd failed.')
                             error = 1
 
 class Gerritw(threading.Thread):
