@@ -267,11 +267,12 @@ class GerritBot(irc.bot.SingleServerIRCBot):
                             message = "Please read https://galileo.mailstation.de/gerrit.html"
                             c.notice(nick, message)
 
-                        try:
-                            os.remove(result[1])
-                        except Exception:
-                            self.log.error('deleting the result file failed.')
-                            error = 1
+                        if error == 0:
+                            try:
+                                os.remove(result[1])
+                            except Exception:
+                                self.log.error('deleting the result file failed.')
+                                error = 1
 
         elif re.search(r'^pd\b', cmd) or re.search(r'^patchdone\b', cmd):
             error = 0
