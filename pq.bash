@@ -16,6 +16,7 @@ REPOPATH=$(mktemp -uq)
 RESPONSE=$(mktemp -uq)
 PATCHFILE=$(mktemp -uq)
 TMPFILE=$(mktemp -uq)
+PUSH_ERR_FILE=$(mktemp -uq)
 
 #DRYRUN="--dry-run"
 DRYRUN=""
@@ -28,7 +29,7 @@ fi
 mkdir "${REPOPATH}"
 
 pushd "${REPOPATH}"
-git clone ssh://philantrop@galileo.mailstation.de:29418/"${repo}".git 
+git clone ssh://philantrop@galileo.mailstation.de:29418/"${repo}".git
 
 if ! [[ -d "${repo}" ]]; then
     error_out "Cloning failed" 3
@@ -56,19 +57,19 @@ clean_message=`sed -e '
         ' "$MSG" | git stripspace`
 
 _gen_ChangeIdInput() {
-	echo "tree `git write-tree`"
-	if parent=`git rev-parse "HEAD^0" 2>/dev/null`
-	then
-		echo "parent $parent"
-	fi
-	echo "author `git var GIT_AUTHOR_IDENT`"
-	echo "committer `git var GIT_COMMITTER_IDENT`"
-	echo
-	printf '%s' "$clean_message"
+    echo "tree `git write-tree`"
+    if parent=`git rev-parse "HEAD^0" 2>/dev/null`
+    then
+        echo "parent $parent"
+    fi
+    echo "author `git var GIT_AUTHOR_IDENT`"
+    echo "committer `git var GIT_COMMITTER_IDENT`"
+    echo
+    printf '%s' "$clean_message"
 }
 _gen_ChangeId() {
-	_gen_ChangeIdInput |
-	git hash-object -t commit --stdin
+    _gen_ChangeIdInput |
+    git hash-object -t commit --stdin
 }
 
 CHGID=$(_gen_ChangeId)
@@ -81,7 +82,7 @@ fi
 
 rm "${PATCHFILE}"
 
-git push ${DRYRUN} --quiet origin HEAD:refs/for/master
+git push ${DRYRUN} --quiet origin HEAD:refs/for/master &> "${PUSH_ERR_FILE}"
 rc=$?
 
 if [[ ${rc} == 0 ]]; then
