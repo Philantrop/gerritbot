@@ -94,6 +94,7 @@ import paho.mqtt.client as mqtt
 #    pid_file_module = daemon.pidfile
 
 fg = 0
+ANTI_FLOOD_DELAY = 1.0
 
 # https://bitbucket.org/jaraco/irc/issue/34/
 # irc-client-should-not-crash-on-failed
@@ -140,7 +141,7 @@ class GerritBot(irc.bot.SingleServerIRCBot):
         self.log.info('Sending "%s" to %s' % (msg, channel))
         try:
             self.connection.privmsg(channel, msg)
-            time.sleep(0.5)
+            time.sleep(ANTI_FLOOD_DELAY)
         except Exception:
             self.log.exception('Exception sending message:')
             self.connection.reconnect()
