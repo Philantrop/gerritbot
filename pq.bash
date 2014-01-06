@@ -44,8 +44,8 @@ fi
 
 MSG=${PATCHFILE}
 
-sed -i -e "/Subject:/a\\\nWKWKWKWK:" "${PATCHFILE}"
-sed -i -e "/WKWKWKWK:/a\\\nPatch-URL: ${patch}" "${PATCHFILE}"
+sed -i -e "/^---$/i\\\nWKWKWKWK:" "${PATCHFILE}"
+sed -i -e "/WKWKWKWK:/iPatch-URL: ${patch}" "${PATCHFILE}"
 
 clean_message=`sed -e '
                 /^diff --git a\/.*/{
