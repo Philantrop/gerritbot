@@ -18,3 +18,4 @@ doc/source/api/*
 gerritbot.conf
 gerritbot_chan.conf
 gerritbot.log
+.pydevproject
