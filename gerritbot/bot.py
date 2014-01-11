@@ -324,9 +324,10 @@ class Gerritw(threading.Thread):
             time.sleep(1)
 
     def patchset_created(self, channel, data):
-        msg = '%s proposed %s: %s  %s patchset: %s' % (
+        msg = '%s proposed %s/%s: %s  %s patchset: %s' % (
             data['patchSet']['uploader']['name'],
             data['change']['project'],
+            data['change']['branch'],
             data['change']['subject'],
             data['change']['url'],
             data['patchSet']['number'])
