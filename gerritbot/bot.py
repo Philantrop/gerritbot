@@ -281,7 +281,7 @@ class GerritBot(irc.bot.SingleServerIRCBot):
 
             if match:
                 try:
-                    resp = gerritlib.gerrit.Gerrit.bulk_query(fg, "status:open AND message:Patch-URL: %s" % match)
+                    resp = gerritlib.gerrit.Gerrit.bulk_query(fg, "status:open AND message:{Patch-URL: %s}" % match)
                 except Exception:
                     self.log.error('querying Gerrit for pd failed')
                     error = 1
