@@ -122,9 +122,11 @@ class GerritBot(irc.bot.SingleServerIRCBot):
         self.log.info('Nick previously in use, recovering.')
         c.nick(c.get_nickname() + "_")
         c.privmsg("nickserv", "identify %s " % self.password)
+        time.sleep(ANTI_FLOOD_DELAY)
         c.privmsg("nickserv", "ghost %s %s" % (self.nickname, self.password))
+        time.sleep(ANTI_FLOOD_DELAY)
         c.privmsg("nickserv", "release %s %s" % (self.nickname, self.password))
-        time.sleep(1)
+        time.sleep(ANTI_FLOOD_DELAY)
         c.nick(self.nickname)
         self.log.info('Nick previously in use, recovered.')
 
@@ -135,7 +137,7 @@ class GerritBot(irc.bot.SingleServerIRCBot):
         for channel in self.channel_list:
             c.join(channel)
             self.log.info('Joined channel %s' % channel)
-            time.sleep(0.5)
+            time.sleep(ANTI_FLOOD_DELAY)
 
     def send(self, channel, msg):
         self.log.info('Sending "%s" to %s' % (msg, channel))
