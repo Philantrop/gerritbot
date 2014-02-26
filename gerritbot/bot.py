@@ -351,8 +351,10 @@ class Gerritw(threading.Thread):
             self.ircbot.send(channel, msg)
 
     def comment_added(self, channel, data):
-        msg = 'A comment has been added to a proposed change to %s: %s  %s' % (
+        msg = '%s commented on %s/%s: %s  %s' % (
+            data['commentAdded']['author']['name'],
             data['change']['project'],
+            data['change']['branch'],
             data['change']['subject'],
             data['change']['url'])
         self.log.info('Compiled Message %s: %s' % (channel, msg))
