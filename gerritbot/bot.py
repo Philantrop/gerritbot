@@ -352,7 +352,7 @@ class Gerritw(threading.Thread):
 
     def comment_added(self, channel, data):
         msg = '%s commented on %s/%s: %s  %s' % (
-            data['commentAdded']['author']['name'],
+            data['author']['name'],
             data['change']['project'],
             data['change']['branch'],
             data['change']['subject'],
