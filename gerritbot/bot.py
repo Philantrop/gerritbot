@@ -233,10 +233,10 @@ class GerritBot(irc.bot.SingleServerIRCBot):
             result = ""
             NOTIFY_SINNER = 1
 
-            if re.search(r'freeedrich', nick):
-                message = "Please use Gerrit directly: https://galileo.mailstation.de/gerrit.html"
-                c.notice(nick, message)
-                error = 1
+            #if re.search(r'freeedrich', nick):
+            #    message = "Please use Gerrit directly: https://galileo.mailstation.de/gerrit.html"
+            #    c.notice(nick, message)
+            #    error = 1
 
             if error == 0 and len(pattern) > 2:
                 repo = pattern[2]
