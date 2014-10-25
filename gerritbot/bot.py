@@ -63,6 +63,8 @@ openstack-dev:
       - openstack/swift
     branches:
       - master
+    ignores: (optional)
+      - username
 """
 
 import ConfigParser
@@ -356,6 +358,11 @@ class Gerritw(threading.Thread):
             self.ircbot.send(channel, msg)
 
     def comment_added(self, channel, data):
+        username = data['author']['username']
+        if (username in self.channel_config.ignores
+            and channel in self.channel_config.ignores.get(username, set())):
+            self.log.info('Ignored comment from %s' % username)
+            return
         msg = '%s commented on %s/%s: %s  %s' % (
             data['author']['name'],
             data['change']['project'],
@@ -522,6 +529,7 @@ class ChannelConfig(object):
         self.projects = {}
         self.events = {}
         self.branches = {}
+        self.ignores = {}
         for channel, val in iter(self.data.items()):
             for event in val['events']:
                 event_set = self.events.get(event, set())
@@ -535,6 +543,11 @@ class ChannelConfig(object):
                 branch_set = self.branches.get(branch, set())
                 branch_set.add(channel)
                 self.branches[branch] = branch_set
+            if 'ignores' in val:
+                for ignore in val['ignores']:
+                    ignore_set = self.ignores.get(ignore, set())
+                    ignore_set.add(channel)
+                    self.ignores[ignore] = ignore_set
 
 
 def _main(config):
