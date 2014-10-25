@@ -1,4 +1,5 @@
 [gerrit]
-host=review.openstack.org
+host=galileo.mailstation.de
 port=29418
-project=openstack-infra/gerritbot.git
+project=GerritBot
+defaultbranch=exherbo
