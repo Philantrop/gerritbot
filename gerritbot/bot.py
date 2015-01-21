@@ -364,7 +364,7 @@ class Gerritw(threading.Thread):
             self.log.info('Ignored comment from %s' % username)
             return
         msg = '%s commented on %s/%s: %s  %s' % (
-            data['author']['name'],
+            data['author']['username'],
             data['change']['project'],
             data['change']['branch'],
             data['change']['subject'],
