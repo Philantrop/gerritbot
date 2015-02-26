@@ -96,7 +96,7 @@ import paho.mqtt.client as mqtt
 #    pid_file_module = daemon.pidfile
 
 fg = 0
-ANTI_FLOOD_DELAY = 1.0
+ANTI_FLOOD_DELAY = 2.0
 
 # https://bitbucket.org/jaraco/irc/issue/34/
 # irc-client-should-not-crash-on-failed
