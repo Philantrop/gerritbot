@@ -21,7 +21,7 @@ PUSH_ERR_FILE=$(mktemp -uq)
 #DRYRUN="--dry-run"
 DRYRUN=""
 
-if ! [[ $(ssh -x -p 29418 philantrop@galileo.mailstation.de gerrit ls-projects | grep "^${repo}$") ]]; then
+if ! [[ $(ssh -x -p 29418 Philantrop@galileo.mailstation.de gerrit ls-projects | grep "^${repo}$") ]]; then
     error_out "Repository not in Gerrit" 0
 fi
 
@@ -29,7 +29,7 @@ fi
 mkdir "${REPOPATH}"
 
 pushd "${REPOPATH}"
-git clone ssh://philantrop@galileo.mailstation.de:29418/"${repo}".git
+git clone ssh://Philantrop@galileo.mailstation.de:29418/"${repo}".git
 
 if ! [[ -d "${repo}" ]]; then
     error_out "Cloning failed" 3
