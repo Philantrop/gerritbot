@@ -369,17 +369,6 @@ class Gerritw(threading.Thread):
             data['change']['branch'],
             data['change']['subject'],
             data['change']['url'])
-
-        approval = data.get('approvals', [])
-        if (re.match('(+|-)[12]', approval['value'])):
-            msg = '%s gave a %s to %s/%s: %s  %s' % (
-                data['author']['username'],
-                approval['value'],
-                data['change']['project'],
-                data['change']['branch'],
-                data['change']['subject'],
-                data['change']['url'])
-
         self.log.info('Compiled Message %s: %s' % (channel, msg))
         self.ircbot.send(channel, msg)
 
