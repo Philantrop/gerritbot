@@ -333,7 +333,7 @@ class Gerritw(threading.Thread):
             time.sleep(1)
 
     def patchset_created(self, channel, data):
-        msg = '%s proposed %s/%s: %s  %s patchset: %s' % (
+        msg = '\x0302%s\x0F proposed %s:\x07%s\x0F: \x02%s\x0F \x0305%s\x0F patchset: %s' % (
             data['patchSet']['uploader']['username'],
             data['change']['project'],
             data['change']['branch'],
@@ -363,7 +363,7 @@ class Gerritw(threading.Thread):
             and channel in self.channel_config.ignores.get(username, set())):
             self.log.info('Ignored comment from %s' % username)
             return
-        msg = '%s commented on %s/%s: %s  %s' % (
+        msg = '\x0302%s\x0F commented on %s:\x07%s\x0F: \x02%s\x0F \x0305%s' % (
             data['author']['username'],
             data['change']['project'],
             data['change']['branch'],
@@ -414,7 +414,7 @@ class Gerritw(threading.Thread):
                 self.ircbot.send(channel, msg)
 
     def change_merged(self, channel, data):
-        msg = 'Merged %s: %s  %s' % (
+        msg = 'Merged %s: \x02%s\x0F \x0305%s' % (
             data['change']['project'],
             data['change']['subject'],
             data['change']['url'])
