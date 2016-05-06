@@ -136,6 +136,9 @@ class GerritBot(irc.bot.SingleServerIRCBot):
         self.log.info('Identifying with IRC server.')
         c.privmsg("nickserv", "identify %s " % self.password)
         self.log.info('Identified with IRC server.')
+        # "unless it uses SASL there'll be a delay between sending the identify
+        # command and actually being identified"
+        time.sleep(ANTI_FLOOD_DELAY)
         for channel in self.channel_list:
             c.join(channel)
             self.log.info('Joined channel %s' % channel)
